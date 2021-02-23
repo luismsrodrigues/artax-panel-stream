@@ -1,22 +1,21 @@
-const express = require('express');
-const app = express();
-const port = 3000
+const EXPRESS = require('express');
+const DEBUG = require('debug')("APP");
+const APP = EXPRESS();
+const PORT = 3000;
 
-const MORGAN = require('morgan');
 const PANEL_HTTP = require('./modules/panel-http-module');
 const OBS_API = require('./modules/obs-api-module');
 const GLOBAL_STATE = require('./modules/state-module');
 const CS_INTEGRATIONS_HTTP = require('./modules/cs-integrations-module').Http;
 
-app.use(MORGAN('combined'));
-app.use('/static', express.static('public'));
+APP.use('/static', EXPRESS.static('public'));
 
-app.use(PANEL_HTTP.Routes);
-app.use("/api", OBS_API.Routes);
-app.use("/api", CS_INTEGRATIONS_HTTP.Routes);
+APP.use(PANEL_HTTP.Routes);
+APP.use("/api", OBS_API.Routes);
+APP.use("/api", CS_INTEGRATIONS_HTTP.Routes);
 
 
-app.get('/global_status', async (req, res) => {
+APP.get('/global_status', async (req, res) => {
   try {
       res.json(GLOBAL_STATE);
   } catch (error) {
@@ -25,6 +24,6 @@ app.get('/global_status', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+APP.listen(PORT, () => {
+  DEBUG(`Example app listening at http://localhost:${PORT}`);
 });

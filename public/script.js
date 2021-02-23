@@ -1,109 +1,146 @@
-const SERVER_INPUT = $("#server-ip");
-const OBS_STATUS = $("#obs-status");
-const CSGO_STATUS = $("#csgo-status");
+//LOGGER
+const LOGGER_REF = $("#logger");
 
-const START_STERAM = $("#start-stream");
-const IN_GAME = $("#in-game");
-const PRE_STOP = $("#pre-stop");
-const STOP_STERAM = $("#stop-stream");
+function AddLog(message, type) {
 
-$('body').append('<div style="" id="loadingDiv"><div class="loader">Loading...</div></div>');
+  function AppendWithType(type, span) {
+    LOGGER_REF.append(`<a href=\"#\" class=\"list-group-item list-group-item-action shadow-sm\"><span class=\"badge badge-${type}\">${span}</span> ${message}</a>`);
+  }
 
-function ChangeStatusToConnected(input) {
-    input.text("CONNECTED");
-    input.removeClass("text-danger");
-    input.addClass("text-success");
+  switch (type.toUpperCase()) {
+
+    case 'ERROR':
+        AppendWithType("danger", "ERROR");
+        break;
+    case 'SUCCESS':
+        AppendWithType("success", "SUCCESS");
+        break;
+    case 'INFO':
+    default:
+        AppendWithType("info", "INFO");
+        break;
+  }
+
+  LOGGER_REF.scrollTop(LOGGER_REF[0].scrollHeight);
 }
 
-function ChangeStatusToNotConnected(input) {
-    input.text("NOT CONNECTED");
-    input.removeClass("text-success");
-    input.addClass("text-danger");
+for (let index = 0; index < 500; index++) {
+  AddLog("TEST LOGGER" + index, "INFO");
 }
 
-$(window).on('load', function(){
-  $.get(`/api/stream/connect`, function(data, status){
-        alert("OBS CONNECTED");
-        ChangeStatusToConnected(OBS_STATUS);
-    })
-    .fail(function () {
-        alert("Error on connect to OBS");
-        ChangeStatusToNotConnected(OBS_STATUS);
-    })
-    .always(function () {
-        removeLoader();
-    });
-});
 
-function removeLoader(){
-    $( "#loadingDiv" ).fadeOut(500, function() {
-      $( "#loadingDiv" ).remove(); 
-  });  
-}
 
-$( "#server-submit" ).click(function() {
-    $('body').append('<div style="" id="loadingDiv"><div class="loader">Loading...</div></div>');
-    $.get(`/api/csgo/start/${SERVER_INPUT.val()}`, function(data, status){
-        alert("Cs go open!");
-        ChangeStatusToConnected(CSGO_STATUS);
-    })
-    .fail(function () {
-        alert("Error on connect to server");
-        ChangeStatusToNotConnected(CSGO_STATUS);
-    })
-    .always(function () {
-        removeLoader();
-    });
-});
 
-START_STERAM.click(function () {
-    $('body').append('<div style="" id="loadingDiv"><div class="loader">Loading...</div></div>');
-    $.get(`/api/stream/start`, function(data, status){
-        alert("Stream started!");
-    })
-    .fail(function () {
-        alert("Error on started stream");
-    })
-    .always(function () {
-        removeLoader();
-    });
-})
+// const SERVER_INPUT = $("#server-ip");
+// const OBS_STATUS = $("#obs-status");
+// const CSGO_STATUS = $("#csgo-status");
 
-IN_GAME.click(function () {
-    $('body').append('<div style="" id="loadingDiv"><div class="loader">Loading...</div></div>');
-    $.get(`/api/stream/game`, function(data, status){
-        alert("Stream change to in game!");
-    })
-    .fail(function () {
-        alert("Error on change to in game stream");
-    })
-    .always(function () {
-        removeLoader();
-    });
-})
+// const START_STERAM = $("#start-stream");
+// const IN_GAME = $("#in-game");
+// const PRE_STOP = $("#pre-stop");
+// const STOP_STERAM = $("#stop-stream");
 
-PRE_STOP.click(function () {
-    $('body').append('<div style="" id="loadingDiv"><div class="loader">Loading...</div></div>');
-    $.get(`/api/stream/pre-stop`, function(data, status){
-        alert("Stream change to pre stop!");
-    })
-    .fail(function () {
-        alert("Error on change to pre stop stream");
-    })
-    .always(function () {
-        removeLoader();
-    });
-})
+// $('body').append('<div style="" id="loadingDiv"><div class="loader">Loading...</div></div>');
 
-STOP_STERAM.click(function () {
-    $('body').append('<div style="" id="loadingDiv"><div class="loader">Loading...</div></div>');
-    $.get(`/api/stream/stop`, function(data, status){
-        alert("Stream stopped!");
-    })
-    .fail(function () {
-        alert("Error on stop stream");
-    })
-    .always(function () {
-        removeLoader();
-    });
-})
+// function ChangeStatusToConnected(input) {
+//     input.text("CONNECTED");
+//     input.removeClass("text-danger");
+//     input.addClass("text-success");
+// }
+
+// function ChangeStatusToNotConnected(input) {
+//     input.text("NOT CONNECTED");
+//     input.removeClass("text-success");
+//     input.addClass("text-danger");
+// }
+
+// $(window).on('load', function(){
+//   $.get(`/api/stream/connect`, function(data, status){
+//         alert("OBS CONNECTED");
+//         ChangeStatusToConnected(OBS_STATUS);
+//     })
+//     .fail(function () {
+//         alert("Error on connect to OBS");
+//         ChangeStatusToNotConnected(OBS_STATUS);
+//     })
+//     .always(function () {
+//         removeLoader();
+//     });
+// });
+
+// function removeLoader(){
+//     $( "#loadingDiv" ).fadeOut(500, function() {
+//       $( "#loadingDiv" ).remove(); 
+//   });  
+// }
+
+// $( "#server-submit" ).click(function() {
+//     $('body').append('<div style="" id="loadingDiv"><div class="loader">Loading...</div></div>');
+//     $.get(`/api/csgo/start/${SERVER_INPUT.val()}`, function(data, status){
+//         alert("Cs go open!");
+//         ChangeStatusToConnected(CSGO_STATUS);
+//     })
+//     .fail(function () {
+//         alert("Error on connect to server");
+//         ChangeStatusToNotConnected(CSGO_STATUS);
+//     })
+//     .always(function () {
+//         removeLoader();
+//     });
+// });
+
+// START_STERAM.click(function () {
+//     $('body').append('<div style="" id="loadingDiv"><div class="loader">Loading...</div></div>');
+//     $.get(`/api/stream/start`, function(data, status){
+//         alert("Stream started!");
+//     })
+//     .fail(function () {
+//         alert("Error on started stream");
+//     })
+//     .always(function () {
+//         removeLoader();
+//     });
+// })
+
+// IN_GAME.click(function () {
+//     $('body').append('<div style="" id="loadingDiv"><div class="loader">Loading...</div></div>');
+//     $.get(`/api/stream/game`, function(data, status){
+//         alert("Stream change to in game!");
+//     })
+//     .fail(function () {
+//         alert("Error on change to in game stream");
+//     })
+//     .always(function () {
+//         removeLoader();
+//     });
+// })
+
+// PRE_STOP.click(function () {
+//     $('body').append('<div style="" id="loadingDiv"><div class="loader">Loading...</div></div>');
+//     $.get(`/api/stream/pre-stop`, function(data, status){
+//         alert("Stream change to pre stop!");
+//     })
+//     .fail(function () {
+//         alert("Error on change to pre stop stream");
+//     })
+//     .always(function () {
+//         removeLoader();
+//     });
+// })
+
+// STOP_STERAM.click(function () {
+//     $('body').append('<div style="" id="loadingDiv"><div class="loader">Loading...</div></div>');
+//     $.get(`/api/stream/stop`, function(data, status){
+//         alert("Stream stopped!");
+//     })
+//     .fail(function () {
+//         alert("Error on stop stream");
+//     })
+//     .always(function () {
+//         removeLoader();
+//     });
+// })
+
+$(document).ready(function(){
+    $('.toast').toast('show');
+  });

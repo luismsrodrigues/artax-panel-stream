@@ -35,7 +35,7 @@ async function CheckSuccessConnectedToServer() {
                 reject({connected: false, error: true, errorMessage: "Fatal error trying connect server " + CSGO.Server.get()});
             }
             count++;
-        }, 500);
+        }, 5000);
     });
 }
 
