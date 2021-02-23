@@ -101,7 +101,7 @@ ROUTER.get('/start/csgo/:ip', async (req, res) => {
         res.json({status: 'open'});
     } catch (error) {
         DISCORD_INTEGRATIONS.Error(error);
-        res.json({error, status: "error"});
+        res.status(500).json({error, status: "error"});
     }
 });
 
