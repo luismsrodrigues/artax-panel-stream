@@ -2,64 +2,16 @@ const ROUTER = require('express').Router();
 const CSGOGSI = require("node-csgo-gsi");
 const { spawnSync } = require('child_process');
 const DISCORD_INTEGRATIONS = require("./discord-integrations-module")();
-
-function validateNum(input, min, max) {
-    var num = +input;
-    return num >= min && num <= max && input === num.toString();
-}
-
-function validateIpAndPort(input) {
-    var parts = input.split(":");
-    var ip = parts[0].split(".");
-    var port = parts[1];
-    return validateNum(port, 1, 65535) &&
-        ip.length == 4 &&
-        ip.every(function (segment) {
-            return validateNum(segment, 0, 255);
-        });
-}
-
-const GLOBAL_STATE = {
-    Connected: {
-        value: false,
-        get: function () {
-            return this.value;
-        },
-        set: function (value) {
-            this.value = value;
-        }
-    },
-    Server: {
-        value: false,
-        get: function () {
-            return this.value;
-        },
-        set: function (value) {
-            if(!validateIpAndPort(value)){
-                throw "Invalid ip server " + value;
-            }
-            this.value = value;
-        }
-    },
-    CS_GO_STATE: {
-        value: null,
-        get: function () {
-            return this.value;
-        },
-        set: function (value) {
-            this.value = value;
-        }
-    },
-}
+const { CSGO } = require('./state-module');
 
 const GSI = new CSGOGSI({ port: 31313, authToken: 'Q79v5tcxVQ8u'});
 GSI.on("all", function(data){
-    GLOBAL_STATE.CS_GO_STATE.set(data);
+    CSGO.State.set(data);
 });
 
 async function KillAllProcessCsGo() {
     await spawnSync('powershell.exe', ['Stop-Process -Name "csgo"']);
-    GLOBAL_STATE.CS_GO_STATE.set(null);
+    CSGO.State.set(null);
 }
 
 async function CheckSuccessConnectedToServer() {
@@ -68,28 +20,28 @@ async function CheckSuccessConnectedToServer() {
 
         let interval = await setInterval(async function() {
             if(count <= 10){
-                if(GLOBAL_STATE.CS_GO_STATE.get() != null && GLOBAL_STATE.CS_GO_STATE.get()["map"]){
+                if(CSGO.State.get() != null && CSGO.State.get()["map"]){
                     clearInterval(interval);
-                    console.log(`Connected on server ${GLOBAL_STATE.Server.get()}`);
-                    DISCORD_INTEGRATIONS.Info(`Connected on server ${GLOBAL_STATE.Server.get()}`);
+                    console.log(`Connected on server ${CSGO.Server.get()}`);
+                    DISCORD_INTEGRATIONS.Info(`Connected on server ${CSGO.Server.get()}`);
                     resolve({connected: true});
                 }
             }else{
-                console.log(`Error on connect to server ${GLOBAL_STATE.Server.get()}`);
-                DISCORD_INTEGRATIONS.Error(`Error on connect to server ${GLOBAL_STATE.Server.get()}`);
+                console.log(`Error on connect to server ${CSGO.Server.get()}`);
+                DISCORD_INTEGRATIONS.Error(`Error on connect to server ${CSGO.Server.get()}`);
                 clearInterval(interval);
 
                 await KillAllProcessCsGo();
-                reject({connected: false, error: true, errorMessage: "Fatal error trying connect server " + GLOBAL_STATE.Server.get()});
+                reject({connected: false, error: true, errorMessage: "Fatal error trying connect server " + CSGO.Server.get()});
             }
             count++;
-        }, 5000);
+        }, 500);
     });
 }
 
-ROUTER.get('/start/csgo/:ip', async (req, res) => {
+ROUTER.get('/csgo/start/:ip', async (req, res) => {
     try {
-        GLOBAL_STATE.Server.set(req.params["ip"]);
+        CSGO.Server.set(req.params["ip"]);
 
         console.log(`Start-Process steam://run/730//+connect ${req.params["ip"]}%20-window`);
         DISCORD_INTEGRATIONS.Info(`Open CS GO on server ${req.params["ip"]}`);
@@ -98,14 +50,19 @@ ROUTER.get('/start/csgo/:ip', async (req, res) => {
         
         await CheckSuccessConnectedToServer();
         
-        res.json({status: 'open'});
+        CSGO.Running.set(true);
+        CSGO.Errors.set([]);
+        res.json(CSGO);
     } catch (error) {
         DISCORD_INTEGRATIONS.Error(error);
-        res.status(500).json({error, status: "error"});
+
+        CSGO.Running.set(false);
+        CSGO.Errors.set(error);
+        res.status(500).json(CSGO);
     }
 });
 
-ROUTER.get('/stop/csgo', async (req, res) => {
+ROUTER.get('/csgo/stop', async (req, res) => {
     await KillAllProcessCsGo();
     res.json({status: 'true'});
 });

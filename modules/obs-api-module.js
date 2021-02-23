@@ -1,5 +1,6 @@
 const ROUTER = require('express').Router();
 const DISCORD = require('./discord-integrations-module')();
+const { OBS_PROVIDER } = require('./state-module');
 const OBSWebSocket = require('obs-websocket-js');
 const obs = new OBSWebSocket();
 
@@ -51,9 +52,6 @@ ROUTER.get('/stream/stop', async (req, res) => {
 });
 
 ROUTER.get('/stream/connect', async (req, res) => {
-    let result = {
-        connected: false
-    };
 
     try {
         await obs.connect({
@@ -62,14 +60,20 @@ ROUTER.get('/stream/connect', async (req, res) => {
         });   
 
         console.log("OBS connected.");
-        result.connected = true;
+        OBS_PROVIDER.Connected.set(true);
+        OBS_PROVIDER.Errors.set([]);
+        
     } catch (error) {
-        result.connected = false;
         console.error("Error on trying connect." + error);
         DISCORD.Error(error);
+        
+        OBS_PROVIDER.Connected.set(false);
+        OBS_PROVIDER.Errors.set(error);
+
+        res.status(500).json(OBS_PROVIDER);
     }
 
-    res.json(result);
+    res.json(OBS_PROVIDER);
 });
 
 

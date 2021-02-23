@@ -16,6 +16,7 @@
     "obs-websocket-js": "^4.0.2",
     "open": "^7.4.2",
     "opn": "^6.0.0",
-    "webhook-discord": "^3.7.7"
+    "webhook-discord": "^3.7.7",
+    "ws": "^7.4.3"
   }
 }

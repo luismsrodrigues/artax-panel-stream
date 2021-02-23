@@ -43,7 +43,7 @@ function removeLoader(){
 
 $( "#server-submit" ).click(function() {
     $('body').append('<div style="" id="loadingDiv"><div class="loader">Loading...</div></div>');
-    $.get(`/api/start/csgo/${SERVER_INPUT.val()}`, function(data, status){
+    $.get(`/api/csgo/start/${SERVER_INPUT.val()}`, function(data, status){
         alert("Cs go open!");
         ChangeStatusToConnected(CSGO_STATUS);
     })
