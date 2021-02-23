@@ -55,6 +55,9 @@ module.exports = {
                 return this.value;
             },
             set: function (value) {
+                if(!validateIpAndPort(value)){
+                    throw "Invalid ip server " + value;
+                }
                 this.value = value;
             }
         },
@@ -68,6 +71,35 @@ module.exports = {
             }
         },
         Errors: {
+            value: null,
+            get: function () {
+                return this.value;
+            },
+            set: function (value) {
+                this.value = value;
+            }
+        },
+    },
+    STREAM:{
+        Running: {
+            value: null,
+            get: function () {
+                return this.value;
+            },
+            set: function (value) {
+                this.value = value;
+            }
+        },
+        Scenes: {
+            value: null,
+            get: function () {
+                return this.value;
+            },
+            set: function (value) {
+                this.value = value;
+            }
+        },
+        SceneActive: {
             value: null,
             get: function () {
                 return this.value;
