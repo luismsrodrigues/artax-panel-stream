@@ -1,10 +1,29 @@
+function WhitAnimation(element) {
+  element
+  .hide()
+  .fadeIn(1000);
+}
+
+//OVERLAY
+const OVERLAY_REF = $("#overlay");
+
+const OVERLAY = {
+  Start: () => OVERLAY_REF.fadeIn("slow", function() {
+      OVERLAY_REF.css('display', 'block'); 
+  }),
+  Stop: () => OVERLAY_REF.fadeOut("slow", function() {
+    OVERLAY_REF.css('display', 'none'); 
+  }),
+}
+
 //LOGGER
 const LOGGER_REF = $("#logger");
 
 function AddLog(message, type) {
 
   function AppendWithType(type, span) {
-    LOGGER_REF.append(`<a href=\"#\" class=\"list-group-item list-group-item-action shadow-sm\"><span class=\"badge badge-${type}\">${span}</span> ${message}</a>`);
+    WhitAnimation($(`<a href=\"#\" class=\"list-group-item list-group-item-action shadow-sm\"><span class=\"badge badge-${type}\">${span}</span> ${message}</a>`)
+    .appendTo(LOGGER_REF));
   }
 
   switch (type.toUpperCase()) {
@@ -24,12 +43,68 @@ function AddLog(message, type) {
   LOGGER_REF.scrollTop(LOGGER_REF[0].scrollHeight);
 }
 
-for (let index = 0; index < 500; index++) {
-  AddLog("TEST LOGGER" + index, "INFO");
+setInterval(() => {
+  AddLog("TEST LOGGER 123", "INFO");
+}, 500);
+
+$(document).ready(function(){
+  $('.toast').toast('show');
+  OVERLAY.Stop();
+});
+
+//OBS PROVIDER
+
+const OBS_PROVIDER_BUTTON = $("#obs-provider-connect");
+const OBS_PROVIDER_STATUS = $("#obs-provider-status");
+
+const OBS_PROVIDER_STATE = {
+  Connected: false,
+  OnConnect: () => {
+    WhitAnimation(OBS_PROVIDER_BUTTON);
+    OBS_PROVIDER_BUTTON.text("CONNECTED");
+    OBS_PROVIDER_BUTTON.removeClass("btn-outline-success");
+    OBS_PROVIDER_BUTTON.addClass("btn-success");
+
+    WhitAnimation(OBS_PROVIDER_STATUS);
+    OBS_PROVIDER_STATUS.text("ON");
+    OBS_PROVIDER_STATUS.removeClass("badge-danger");
+    OBS_PROVIDER_STATUS.addClass("badge-success");
+
+    OBS_PROVIDER_STATE.Connected = true;
+  },
+  OnDisconnect: () => {
+    WhitAnimation(OBS_PROVIDER_BUTTON);
+    OBS_PROVIDER_BUTTON.text("CONNECT");
+    OBS_PROVIDER_BUTTON.removeClass("btn-success");
+    OBS_PROVIDER_BUTTON.addClass("btn-outline-success");
+
+    WhitAnimation(OBS_PROVIDER_STATUS);
+    OBS_PROVIDER_STATUS.text("OFF");
+    OBS_PROVIDER_STATUS.removeClass("badge-success");
+    OBS_PROVIDER_STATUS.addClass("badge-danger");
+
+    OBS_PROVIDER_STATE.Connected = false;
+  }
 }
 
+OBS_PROVIDER_BUTTON.click(() => {
 
+  if(OBS_PROVIDER_STATE.Connected){
+    return;
+  }
 
+  OVERLAY.Start();
+
+  setTimeout(() => {
+    OBS_PROVIDER_STATE.OnConnect();
+
+    setTimeout(() => {
+      OBS_PROVIDER_STATE.OnDisconnect();
+    }, 2000);
+
+    OVERLAY.Stop();
+  }, 2000);
+});
 
 // const SERVER_INPUT = $("#server-ip");
 // const OBS_STATUS = $("#obs-status");
@@ -140,7 +215,3 @@ for (let index = 0; index < 500; index++) {
 //         removeLoader();
 //     });
 // })
-
-$(document).ready(function(){
-    $('.toast').toast('show');
-  });

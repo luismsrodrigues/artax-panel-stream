@@ -10,10 +10,14 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     <link rel="stylesheet" href="/static/styles.css" />
-    <title>AGENCY STREAM STATUS</title>
+    <title>STREAM PANEL</title>
 </head>
 
 <body>
+    <div id="overlay">
+        <div class="spinner"></div>
+    </div>
+    
     <div class="toast" style="position: absolute; top: 66px; right: 15px; z-index: 2000;" data-delay="10000">
         <div class="toast-header">
         <strong class="mr-auto">Message</strong>
@@ -35,34 +39,42 @@
             
                     <div class="navbar-nav ml-auto">
                         <div class="nav-item">        
-                            <button class="btn btn-outline-success my-2 my-sm-0" type="button">CONNECT TO PROVIDER</button>
+                            <button 
+                                id="obs-provider-connect" 
+                                class="btn btn-outline-success" 
+                                type="button" 
+                                data-toggle="tooltip" 
+                                data-placement="top" 
+                                title="PROVIDER OBS">CONNECT</button>
                         </div>
                     </div>
                 </nav>
             </div>
         </div>
 
-        <div class="row flex-fill pt-3">
-          <div class="col-sm-12 col-md-8">
+        <div class="row flex-fill">
+          <div class="col-sm-12 col-md-4">
             <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="card-text">Content</p>
-                        </div>
+                <div class="col-sm-12 col-md-12 pt-3">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-center">CONNECT CS_GO</a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-center">START STREAM</a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-center">TRANSITION TO IN GAME</a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-center">TRANSITION TO WAITING</a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-center">TRANSITION TO END STREAM</a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-center">STOP STREAM</a>
                     </div>
                 </div>
             </div>
           </div>
-          <div class="col-sm-12 col-md-4">
+          <div class="col-sm-12 col-md-8">
             <div class="row">
-                <div class="col-sm-12 col-md-12">
+                <div class="col-sm-12 col-md-12 pt-3 pb-3">
                     <div class="row">
                         <div class="col-sm-12 col-md-12">
                             <div class="card" style="height: 600px;">
                                 <div class="card-body">
-                                    <div id="logger" class="list-group">
-                                    </div>
+                                    <div id="logger" class="list-group"></div>
                                 </div>
                             </div>
                          </div>
@@ -70,7 +82,12 @@
                     <div class="row pt-3">
                         <div class="col-sm-12 col-md-12">
                             <div class="list-group">
-                                <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between">OBS PROVIDER STATUS: <span class="badge badge-danger">OFF</span></a>
+                                <a 
+                                    href="#"  
+                                    class="list-group-item list-group-item-action d-flex justify-content-between">
+                                        OBS PROVIDER STATUS: 
+                                        <span id="obs-provider-status" class="badge badge-danger">OFF</span>
+                                </a>
                                 <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between">COUNTER-STRIKE STATUS: <span class="badge badge-danger">OFF</span></a>
                                 <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between">STREAM STATUS: <span class="badge badge-danger">OFF</span></a>
                             </div>
