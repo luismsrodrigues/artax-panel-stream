@@ -18,7 +18,28 @@ function validateIpAndPort(input) {
     }
 }
 
-module.exports = {
+
+let GLOBAL_STATE = {
+    LOG:{
+        value: [],
+        set: function (type, message) {
+            GLOBAL_STATE.LOG.value.push({
+                type,
+                message
+            });
+            WEBSOCKET.LogUpdate({
+                type,
+                message
+            });
+        }
+    },
+    PROCESSING:{
+        value: false,
+        set: function (value) {
+            GLOBAL_STATE.PROCESSING.value = value;
+            WEBSOCKET.ProcessManager(value);
+        }
+    },
     OBS_PROVIDER: {
         Connected: {
             value: null,
@@ -27,6 +48,7 @@ module.exports = {
             },
             set: function (value) {
                 this.value = value;
+                WEBSOCKET.Notify(GLOBAL_STATE);
             }
         },
         Errors: {
@@ -36,6 +58,7 @@ module.exports = {
             },
             set: function (value) {
                 this.value = value;
+                WEBSOCKET.Notify(GLOBAL_STATE);
             }
         },
     },
@@ -47,6 +70,7 @@ module.exports = {
             },
             set: function (value) {
                 this.value = value;
+                WEBSOCKET.Notify(GLOBAL_STATE);
             }
         },
         Server: {
@@ -59,6 +83,7 @@ module.exports = {
                     throw "Invalid ip server " + value;
                 }
                 this.value = value;
+                WEBSOCKET.Notify(GLOBAL_STATE);
             }
         },
         State: {
@@ -68,6 +93,7 @@ module.exports = {
             },
             set: function (value) {
                 this.value = value;
+                // WEBSOCKET.Notify(GLOBAL_STATE);
             }
         },
         Errors: {
@@ -77,6 +103,7 @@ module.exports = {
             },
             set: function (value) {
                 this.value = value;
+                // WEBSOCKET.Notify(GLOBAL_STATE);
             }
         },
     },
@@ -88,6 +115,7 @@ module.exports = {
             },
             set: function (value) {
                 this.value = value;
+                // WEBSOCKET.Notify(GLOBAL_STATE);
             }
         },
         Scenes: {
@@ -97,6 +125,7 @@ module.exports = {
             },
             set: function (value) {
                 this.value = value;
+                // WEBSOCKET.Notify(GLOBAL_STATE);
             }
         },
         SceneActive: {
@@ -106,7 +135,12 @@ module.exports = {
             },
             set: function (value) {
                 this.value = value;
+                // // WEBSOCKET.Notify(GLOBAL_STATE);
             }
         },
     },
 }
+
+const WEBSOCKET = require('./ws-integrations-module')();
+
+module.exports = GLOBAL_STATE;

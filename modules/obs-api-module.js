@@ -1,6 +1,6 @@
 const ROUTER = require('express').Router();
 const DISCORD = require('./discord-integrations-module')();
-const { OBS_PROVIDER } = require('./state-module');
+const { OBS_PROVIDER, LOG, PROCESSING } = require('./state-module');
 const OBSWebSocket = require('obs-websocket-js');
 const obs = new OBSWebSocket();
 
@@ -53,13 +53,15 @@ ROUTER.get('/stream/stop', async (req, res) => {
 
 ROUTER.get('/stream/connect', async (req, res) => {
 
+    PROCESSING.set(true);
+    LOG.set("INFO","CONNECTING TO OBS PROVIDER");
+
     try {
         await obs.connect({
             address: 'localhost:4444',
             password: 'camelo123'
         });   
 
-        console.log("OBS connected.");
         OBS_PROVIDER.Connected.set(true);
         OBS_PROVIDER.Errors.set([]);
         
@@ -69,10 +71,15 @@ ROUTER.get('/stream/connect', async (req, res) => {
         
         OBS_PROVIDER.Connected.set(false);
         OBS_PROVIDER.Errors.set(error);
-
+    
+        LOG.set("ERROR", JSON.stringify(error));
+        PROCESSING.set(false);
         res.status(500).json(OBS_PROVIDER);
+        return;
     }
 
+    LOG.set("SUCCESS", "OBS PROVIDER CONNECTED");
+    PROCESSING.set(false);
     res.json(OBS_PROVIDER);
 });
 

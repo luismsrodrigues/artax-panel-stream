@@ -6,7 +6,10 @@ const PORT = 3000;
 const PANEL_HTTP = require('./modules/panel-http-module');
 const OBS_API = require('./modules/obs-api-module');
 const GLOBAL_STATE = require('./modules/state-module');
+const WS = require('./modules/ws-integrations-module');
 const CS_INTEGRATIONS_HTTP = require('./modules/cs-integrations-module').Http;
+
+WS().Setup(GLOBAL_STATE);
 
 APP.use('/static', EXPRESS.static('public'));
 
