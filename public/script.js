@@ -185,10 +185,9 @@ const OBS_PROVIDER_STATUS = $("#obs-provider-status");
 const OBS_PROVIDER_STATE = {
   Connected: false,
   OnConnect: () => {
-    UTIL.Animation(OBS_PROVIDER_BUTTON);
-    OBS_PROVIDER_BUTTON.text("CONNECTED");
-    OBS_PROVIDER_BUTTON.removeClass("btn-outline-success");
-    OBS_PROVIDER_BUTTON.addClass("btn-success");
+    OBS_PROVIDER_BUTTON.addClass("list-group-item-success");
+    OBS_PROVIDER_BUTTON.text("OBS CONNECT (connected)");
+    CSGO_PROVIDER_STATE.Connected = true;
 
     UTIL.Animation(OBS_PROVIDER_STATUS);
     OBS_PROVIDER_STATUS.text("ON");
@@ -198,10 +197,8 @@ const OBS_PROVIDER_STATE = {
     OBS_PROVIDER_STATE.Connected = true;
   },
   OnDisconnect: () => {
-    UTIL.Animation(OBS_PROVIDER_BUTTON);
-    OBS_PROVIDER_BUTTON.text("CONNECT");
-    OBS_PROVIDER_BUTTON.removeClass("btn-success");
-    OBS_PROVIDER_BUTTON.addClass("btn-outline-success");
+    OBS_PROVIDER_BUTTON.removeClass("list-group-item-success");
+    OBS_PROVIDER_BUTTON.text("OBS CONNECT (disconnected)");
 
     UTIL.Animation(OBS_PROVIDER_STATUS);
     OBS_PROVIDER_STATUS.text("OFF");
@@ -222,7 +219,7 @@ const OBS_PROVIDER_STATE = {
 OBS_PROVIDER_BUTTON.click(async () => {
 
   if(OBS_PROVIDER_STATE.Connected){
-    return;
+    return;ç
   }
 
   try {
